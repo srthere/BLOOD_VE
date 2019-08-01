@@ -1,0 +1,21 @@
+{%extends 'layout.html' %}
+{% block body %}
+  <hr>
+  <table class="table table-striped">
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Phone Number</th>
+      <th>Address</th>
+      <th></th>
+      <th></th>
+    </tr>
+    {% for search in search %}
+      <tr>
+        <td>{{search.NAME}}</td>
+        <td>{{search.EMAIL}}</td>
+        <td>{{search.PHONE_NUMBER}}</td>
+        <td>{{search.ADDRESS}}</td>
+      </tr>
+    {% endfor %}
+{% endblock %}

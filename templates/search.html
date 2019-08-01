@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <h1>Search</h1>
+    {% include 'includes/_messages.html' %}  
+  <form action="" method="POST">
+    <div class="form.group">
+      <label>City</label>
+      <input type="text" name="CITY" class="form-control" value ={{request.form.CITY}}>
+
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+  {% endblock %}

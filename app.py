@@ -52,6 +52,7 @@ class RegisterForm(Form):
     EMAIL =StringField('Email', [validators.Length(min=6, max=50)])
     PHONE_NUMBER =StringField('PHONE_NUMBER', [validators.Length(min=10, max=50)])
     ADDRESS =StringField('ADDRESS', [validators.Length(min=2, max=200)])
+    CITY = StringField('CITY',[validators.Length(min=2,max=50)])
 @app.route('/register/', methods=['GET', 'post'])
 def register():
     form = RegisterForm(request.form)
@@ -64,11 +65,14 @@ def register():
         BLOOD_GROUP = form.BLOOD_GROUP.data
         PHONE_NUMBER = form.PHONE_NUMBER.data
         ADDRESS = form.ADDRESS.data
-
+        CITY = form.CITY.data
         #Create DictCursor
         cur = mysql.connection.cursor()
         # Execute query
-        cur.execute("INSERT INTO users(NAME, USERNAME, PASSWORD, EMAIL, BLOOD_GROUP, PHONE_NUMBER, ADDRESS) VALUES(%s, %s, %s, %s, %s, %s, %s)", (NAME, USERNAME, PASSWORD, EMAIL, BLOOD_GROUP, PHONE_NUMBER, ADDRESS))
+        cur.execute("INSERT INTO users(NAME, USERNAME, PASSWORD, EMAIL, BLOOD_GROUP, PHONE_NUMBER, ADDRESS,CITY) VALUES(%s, %s, %s, %s, %s, %s, %s,%s)", (NAME, USERNAME, PASSWORD, EMAIL, BLOOD_GROUP, PHONE_NUMBER, ADDRESS,CITY))
+
+        cur.execute("INSERT INTO cities(EMAIL,CITY) VALUES(%s,%s)",(EMAIL,CITY))
+
         # commit to DB
         mysql.connection.commit()
         # Close connection
@@ -135,7 +139,27 @@ def dashboard():
     #close conection
     cur.close()
 
-# Aricle form class
+#Search Bar
+@app.route('/Search/',methods = ['GET','POST'])
+def Search():
+    if request.method == 'POST':
+        #Get Form FIelds
+        CITY = request.form['CITY']
+        cur = mysql.connection.cursor()
+        result=cur.execute("SELECT * FROM cities WHERE CITY = %s",[CITY])
+
+        if result > 0:
+            result=cur.execute("SELECT * FROM users WHERE CITY=%s",[CITY])
+            search = cur.fetchall()
+            return render_template('setter.html',search=search)
+        else:
+            msg='No Donors Found in this City'
+            return render_template('search.html',msg=msg)
+        cur.close()
+        cur2.close()
+    return render_template('search.html')
+
+# Aricle form clas
 class ArticleForm(Form):
     title = StringField('Title', [validators.Length(min=1, max=500)])
     body =TextAreaField('Body', [validators.Length(min=30)])
