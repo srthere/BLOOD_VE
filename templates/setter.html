@@ -1,12 +1,14 @@
 {%extends 'layout.html' %}
 {% block body %}
   <hr>
+  <a href='/send'><input type="button" class="btn btn-success" value="Send Mail to all"></a>
   <table class="table table-striped">
     <tr>
       <th>Name</th>
       <th>Email</th>
       <th>Phone Number</th>
       <th>Address</th>
+      <th>Blood Group</th>
       <th></th>
       <th></th>
     </tr>
@@ -16,6 +18,7 @@
         <td>{{search.EMAIL}}</td>
         <td>{{search.PHONE_NUMBER}}</td>
         <td>{{search.ADDRESS}}</td>
+        <td>{{search.BLOOD_GROUP}}
       </tr>
     {% endfor %}
 {% endblock %}

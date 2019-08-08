@@ -4,7 +4,18 @@ from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
+from flask_mail import Mail,Message
 app= Flask(__name__)
+#config EMAIL
+
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT']=465
+app.config['MAIL_USE_SSL']=True
+
+app.config['MAIL_USERNAME'] = 'mi.manishpathak@gmail.com'
+app.config['MAIL_PASSWORD'] = 'cciqfpzhevoicwlo'
+mail=Mail(app)
+
 #Config MySQL
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -13,13 +24,64 @@ app.config['MYSQL_DB'] = 'BLOOD_VE'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 #init MySQL
 mysql = MySQL(app)
+def is_logged_in(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash('Unauthorized, Please login', 'danger')
+            return redirect(url_for('login'))
+    return wrap
 #Articles = Articles()
 @app.route('/')
 def index():
     return render_template('home.html')
+
+#for sending mail
+@app.route('/send/',methods=['GET','post'])
+@is_logged_in
+def send():
+    if request.method == 'POST':
+        #Get Form FIelds
+        CITY = request.form['CITY']
+        BLOOD_GROUP=request.form['BLOOD_GROUP']
+        cur = mysql.connection.cursor()
+        xpcounter = "SELECT * FROM users WHERE CITY = %s AND BLOOD_GROUP=%s"
+        result=cur.execute(xpcounter, (CITY, BLOOD_GROUP))
+        if result > 0:
+            result=cur.execute("SELECT * FROM users WHERE CITY=%s",[CITY])
+            search = cur.fetchall()
+            recipients=[]
+            for i in search:
+                if(i['USERNAME']!=session['USERNAME']):
+                    recipients.append(i['EMAIL'])
+            body='Hello!!\n'
+            k=cur.execute("SELECT * FROM users WHERE USERNAME=%s",[session['USERNAME']])
+            search=cur.fetchall()
+            for i in search:
+                if(i['NAME']):
+                    body=body+i['NAME']
+                    body+=' has requested a type of blood group that matched with yours.'
+                if(i['PHONE_NUMBER']):
+                    body+='\n'+'You can also contact to the one who is in need by dialing the below mentioned phone number.\n'
+                    body+=i['PHONE_NUMBER']
+                    body+='\n'+"Thank You!!"
+
+            msg = mail.send_message('Requirement of Blood in Your City',sender='mi.manishpathak@gmail.com',recipients=recipients,body=body)
+            return "msg sent"
+        else:
+            msg='No Donors Found in this City'
+            return render_template('confirm.html',msg=msg)
+        cur.close()
+    return render_template('confirm.html')
+
+
 @app.route('/about/')
 def about():
     return render_template('about.html')
+
+
 @app.route('/articles/')
 def articles():
     cur =mysql.connection.cursor()
@@ -33,6 +95,8 @@ def articles():
         return render_template('articles.html',msg =msg)
     #close conection
     cur.close()
+
+
 @app.route('/article/<string:id>/')
 def article(id):
     cur =mysql.connection.cursor()
@@ -53,6 +117,8 @@ class RegisterForm(Form):
     PHONE_NUMBER =StringField('PHONE_NUMBER', [validators.Length(min=10, max=50)])
     ADDRESS =StringField('ADDRESS', [validators.Length(min=2, max=200)])
     CITY = StringField('CITY',[validators.Length(min=2,max=50)])
+
+
 @app.route('/register/', methods=['GET', 'post'])
 def register():
     form = RegisterForm(request.form)
@@ -77,10 +143,12 @@ def register():
         mysql.connection.commit()
         # Close connection
         cur.close()
-        flash('You are now registere and can log in', 'success')
+        flash('You are now registered and can log in', 'success')
 
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
+
+
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -104,17 +172,9 @@ def login():
                 return render_template('login.html',error=error)
         else:
             error = 'Username not found'
-            return render_template('login.html',error)
+            return render_template('login.html',error=error)
     return render_template('login.html')
-def is_logged_in(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return f(*args, **kwargs)
-        else:
-            flash('Unauthorized, Please login', 'danger')
-            return redirect(url_for('login'))
-    return wrap
+
 @app.route('/logout/')
 @is_logged_in
 def logout():
@@ -156,7 +216,7 @@ def Search():
             msg='No Donors Found in this City'
             return render_template('search.html',msg=msg)
         cur.close()
-        cur2.close()
+        #cur2.close()
     return render_template('search.html')
 
 # Aricle form clas

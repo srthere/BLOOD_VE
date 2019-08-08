@@ -1,0 +1,14 @@
+{%extends 'layout.html' %}
+{% block body %}
+{% include 'includes/_messages.html' %}
+<form action="" method="POST">
+  <div class="form.group">
+    <label>Confirm City</label>
+    <input type="text" name="CITY" class="form-control" value ={{request.form.CITY}}>
+    <label>Blood Group</label>
+    <input type="text" name="BLOOD_GROUP" class="form-control" value ={{request.form.BLOOD_GROUP}}>
+  </div>
+  <button type="submit" class="btn btn-primary">Confirm</button>
+</form>
+
+{% endblock %}
