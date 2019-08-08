@@ -5,7 +5,11 @@ from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
 from flask_mail import Mail,Message
+from itsdangerous import URLSafeTimedSerializer,SignatureExpired
+
 app= Flask(__name__)
+#app.config.from_pyfile('config.cfg')
+app.secret_key='secret123'
 #config EMAIL
 
 app.config['MAIL_SERVER']='smtp.gmail.com'
@@ -15,6 +19,7 @@ app.config['MAIL_USE_SSL']=True
 app.config['MAIL_USERNAME'] = 'mi.manishpathak@gmail.com'
 app.config['MAIL_PASSWORD'] = 'cciqfpzhevoicwlo'
 mail=Mail(app)
+s=URLSafeTimedSerializer(app.secret_key)
 
 #Config MySQL
 app.config['MYSQL_HOST'] = 'localhost'
@@ -69,12 +74,16 @@ def send():
                     body+='\n'+"Thank You!!"
 
             msg = mail.send_message('Requirement of Blood in Your City',sender='mi.manishpathak@gmail.com',recipients=recipients,body=body)
-            return "msg sent"
+            l="msg sent"
+            return render_template('home.html',msg=l)
         else:
             msg='No Donors Found in this City'
             return render_template('confirm.html',msg=msg)
         cur.close()
     return render_template('confirm.html')
+
+
+
 
 
 @app.route('/about/')
@@ -138,16 +147,28 @@ def register():
         cur.execute("INSERT INTO users(NAME, USERNAME, PASSWORD, EMAIL, BLOOD_GROUP, PHONE_NUMBER, ADDRESS,CITY) VALUES(%s, %s, %s, %s, %s, %s, %s,%s)", (NAME, USERNAME, PASSWORD, EMAIL, BLOOD_GROUP, PHONE_NUMBER, ADDRESS,CITY))
 
         cur.execute("INSERT INTO cities(EMAIL,CITY) VALUES(%s,%s)",(EMAIL,CITY))
-
+        #for email confirmation
+        token=s.dumps(EMAIL,salt='email-confirm')
+        msg=Message('Confirm Email',sender='mi.manishpathak@gmail.com',recipients=[EMAIL])
+        link=url_for('confirm_email',token=token,_external=True)
+        msg.body='Your link is {}'.format(link)
+        mail.send(msg)
         # commit to DB
         mysql.connection.commit()
         # Close connection
         cur.close()
-        flash('You are now registered and can log in', 'success')
+        flash('You are now registered and can log in and verify your email address', 'success')
 
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
-
+#showing confirmation Message
+@app.route('/confirm_email/<token>')
+def confirm_email(token):
+    try:
+        email=s.loads(token,salt='email-confirm',max_age=120)
+    except SignatureExpired:
+        return '<h1>The link is expired</h1>'
+    return 'Email Verified'
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -286,5 +307,5 @@ def delete_article(id):
 
 
 if __name__ == '__main__':
-    app.secret_key='secret123'
+
     app.run(debug=True)
