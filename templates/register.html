@@ -1,30 +1,139 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Join Today</legend>
+                <div class="form-group">
+                    {{ form.NAME.label(class="form-control-label") }}
 
-  {% extends 'layout.html' %}
+                    {% if form.NAME.errors %}
+                        {{ form.NAME(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.NAME.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.NAME(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.USERNAME.label(class="form-control-label") }}
 
-  {% block body %}
-    <h1>Register</h1>
-    {% from "includes/_formhelpers.html" import render_field %}
-    <form method="POST" action="">
-      <div class="form-group">
-        {{render_field(form.NAME, class_="form-control")}}
+                    {% if form.USERNAME.errors %}
+                        {{ form.USERNAME(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.USERNAME.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.USERNAME(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
 
-        {{render_field(form.USERNAME, class_="form-control")}}
-
-        {{render_field(form.PASSWORD, class_="form-control")}}
-
-        {{render_field(form.confirm, class_="form-control")}}
-
-        {{render_field(form.EMAIL, class_="form-control")}}
-
-        {{render_field(form.BLOOD_GROUP, class_="form-control")}}
-
-        {{render_field(form.PHONE_NUMBER, class_="form-control")}}
-
-        {{render_field(form.ADDRESS, class_="form-control")}}
-
-        {{render_field(form.CITY, class_="form-control")}}
-      </div>
-      <p><input type="submit" class="btn btn-primary" value="Submit"></p>
-    </form>
-
-  {% endblock %}
+                <div class="form-group">
+                    {{ form.PASSWORD.label(class="form-control-label") }}
+                    {% if form.PASSWORD.errors %}
+                        {{ form.PASSWORD(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.PASSWORD.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.PASSWORD(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.confirm.label(class="form-control-label") }}
+                    {% if form.confirm.errors %}
+                        {{ form.confirm(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.confirm.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.confirm(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.EMAIL.label(class="form-control-label") }}
+                    {% if form.EMAIL.errors %}
+                        {{ form.EMAIL(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.EMAIL.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.EMAIL(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.BLOOD_GROUP.label(class="form-control-label") }}
+                    {% if form.BLOOD_GROUP.errors %}
+                        {{ form.BLOOD_GROUP(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.BLOOD_GROUP.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.BLOOD_GROUP(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.PHONE_NUMBER.label(class="form-control-label") }}
+                    {% if form.PHONE_NUMBER.errors %}
+                        {{ form.PHONE_NUMBER(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.PHONE_NUMBER.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.PHONE_NUMBER(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.ADDRESS.label(class="form-control-label") }}
+                    {% if form.ADDRESS.errors %}
+                        {{ form.ADDRESS(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.ADDRESS.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.ADDRESS(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.CITY.label(class="form-control-label") }}
+                    {% if form.CITY.errors %}
+                        {{ form.CITY(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.CITY.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.CITY(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.Submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            Already Have An Account? <a class="ml-2" href="{{ url_for('login') }}">Sign In</a>
+        </small>
+    </div>
+{% endblock content %}
