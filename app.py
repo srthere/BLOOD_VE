@@ -113,6 +113,8 @@ def article(id):
     result = cur.execute("SELECT * FROM articles WHERE id = %s", [id])
     article = cur.fetchone()
     return render_template('article.html',article = article)
+
+
 class RegisterForm(Form):
     NAME = StringField('Name', [validators.Length(min=1, max=50)])
     USERNAME =StringField('Username', [validators.Length(min=4, max=30)])
@@ -240,10 +242,11 @@ def Search():
         #cur2.close()
     return render_template('search.html')
 
-# Aricle form clas
+# Aricle form class
 class ArticleForm(Form):
     title = StringField('Title', [validators.Length(min=1, max=500)])
     body =TextAreaField('Body', [validators.Length(min=30)])
+
 
 @app.route('/add_article/', methods = ['GET', 'POST'])
 @is_logged_in
@@ -265,7 +268,7 @@ def add_article():
         return redirect(url_for('dashboard'))
     return render_template('add_article.html', form =form)
 #edit article
-@app.route('/edit_article/<string:id>', methods = ['GET', 'POST'])
+@app.route('/edit_article/<string:id>/', methods = ['GET', 'POST'])
 @is_logged_in
 def edit_article(id):
     #Create Cursor
@@ -294,7 +297,7 @@ def edit_article(id):
         return redirect(url_for('dashboard'))
     return render_template('edit_article.html', form =form)
 #delete_article
-@app.route('/delete_article/<string:id>', methods=['post'])
+@app.route('/delete_article/<string:id>/', methods=['post'])
 @is_logged_in
 def delete_article(id):
     cur = mysql.connection.cursor()
