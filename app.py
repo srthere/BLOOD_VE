@@ -178,13 +178,13 @@ def login():
                 flash('You are now logged in', 'success')
                 return redirect(url_for('dashboard'))
             else:
-                error = 'Invalid login'
+                error = 'Invalid Password'
                 app.logger.info('PASSWORD not MATCHED')
-                return render_template('login.html',error=error)
+                return render_template('login.html',error=error,form=form)
         else:
             error = 'Username not found'
-            return render_template('login.html',error=error)
-    return render_template('login.html',title='login',form=form)
+            return render_template('login.html',error=error,form=form)
+    return render_template('login.html',form=form)
 
 @app.route('/logout/')
 @is_logged_in
