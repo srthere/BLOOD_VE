@@ -15,8 +15,8 @@ app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT']=465
 app.config['MAIL_USE_SSL']=True
-
-app.config['MAIL_USERNAME'] = 'mi.manishpathak@gmail.com'
+#add a email and password
+app.config['MAIL_USERNAME'] = ''
 app.config['MAIL_PASSWORD'] = ''
 mail=Mail(app)
 s=URLSafeTimedSerializer(app.secret_key)
@@ -72,8 +72,8 @@ def send():
                     body+='\n'+'You can also contact to the one who is in need by dialing the below mentioned phone number.\n'
                     body+=i['PHONE_NUMBER']
                     body+='\n'+"Thank You!!"
-
-            msg = mail.send_message('Requirement of Blood in Your City',sender='mi.manishpathak@gmail.com',recipients=recipients,body=body)
+     #add a sender email
+            msg = mail.send_message('Requirement of Blood in Your City',sender='',recipients=recipients,body=body)
             l="msg sent"
             return render_template('home.html',msg=l)
         else:
