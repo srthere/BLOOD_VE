@@ -1,0 +1,13 @@
+{%extends 'layout1.html' %}
+{% block body %}
+
+<form action="" method="POST">
+  <div class="form.group">
+    <label>Do You Really want to delete your account?</label>
+    <a href='/delete_account'><input type="button" class="btn btn-primary" value="YES"></a>
+    <a href='/settings'><input type="button" class="btn btn-primary" value="NO"></a>
+  </div>
+
+</form>
+
+{% endblock %}

@@ -16,8 +16,8 @@ app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT']=465
 app.config['MAIL_USE_SSL']=True
 #add a email and password
-app.config['MAIL_USERNAME'] = ''
-app.config['MAIL_PASSWORD'] = ''
+app.config['MAIL_USERNAME'] = 'mi.manishpathak@gmail.com'
+app.config['MAIL_PASSWORD'] = 'cdffbdoavaibqlvn'
 mail=Mail(app)
 s=URLSafeTimedSerializer(app.secret_key)
 
@@ -73,7 +73,7 @@ def send():
                     body+=i['PHONE_NUMBER']
                     body+='\n'+"Thank You!!"
      #add a sender email
-            msg = mail.send_message('Requirement of Blood in Your City',sender='',recipients=recipients,body=body)
+            msg = mail.send_message('Requirement of Blood in Your City',sender='mi.manishpathak@gamil.com',recipients=recipients,body=body)
             l="msg sent"
             return render_template('home.html',msg=l)
         else:
@@ -150,14 +150,41 @@ def register():
 
         return redirect(url_for('login'))
     return render_template('register.html',title='Register', form=form)
+
+#token generation
+@app.route('/token/')
+@is_logged_in
+def token():
+    cur=mysql.connection.cursor()
+    EMAIL=cur.execute("SELECT EMAIL from users WHERE USERNAME=%s",[session['USERNAME']])
+    if EMAIL>0:
+        data = cur.fetchone()
+        EMAIL = data['EMAIL']
+        token=s.dumps(EMAIL,salt='email-confirm')
+        msg=Message('Confirm Email',sender='mi.manishpathak@gmail.com',recipients=[EMAIL])
+        link=url_for('confirm_email',token=token,_external=True)
+        msg.body='Your link is {}'.format(link)
+        mail.send(msg)
+        flash("Link Sent!!")
+        return redirect(url_for('index'))
+
+
 #showing confirmation Message
 @app.route('/confirm_email/<token>')
 def confirm_email(token):
     try:
-        email=s.loads(token,salt='email-confirm',max_age=120)
+        email=s.loads(token,salt='email-confirm',max_age=300)
     except SignatureExpired:
-        return '<h1>The link is expired</h1>'
-    return 'Email Verified'
+        flash("The Link is Expired")
+        return redirect(url_for('index'))
+    cur=mysql.connection.cursor()
+    var=True
+    cur.execute("UPDATE users SET verify=%s WHERE EMAIL=%s",(var,email))
+    mysql.connection.commit()
+    cur.close()
+    flash ("Email verified")
+    return email
+    return redirect(url_for('login'))
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -198,6 +225,7 @@ def logout():
 @is_logged_in
 def dashboard():
     #cursor
+
     cur =mysql.connection.cursor()
     #Get Aricle
     result = cur.execute("SELECT * FROM articles")
@@ -208,6 +236,7 @@ def dashboard():
         msg= 'No article found'
         return render_template('dashboard.html',msg =msg)
     #close conection
+
     cur.close()
 
 #Search Bar
@@ -292,7 +321,56 @@ def delete_article(id):
     cur.close()
     flash('Article Deleted', 'success')
     return redirect(url_for('dashboard'))
+#account settings
+@app.route('/settings/')
+@is_logged_in
+def settings():
+    cur = mysql.connection.cursor()
+    result=cur.execute("SELECT * FROM users WHERE USERNAME=%s",[session['USERNAME']])
+    search = cur.fetchall()
+    return render_template('settings.html',search=search)
 
+#change USERNAME
+@app.route('/username/',methods=['GET','POST'])
+@is_logged_in
+def username():
+    if request.method == 'POST':
+        #Get Form FIelds
+        USERNAME = request.form['USERNAME']
+        CHANGE=request.form['CHANGE']
+        cur = mysql.connection.cursor()
+        result=cur.execute("SELECT * FROM users WHERE USERNAME = %s",[USERNAME])
+
+        if result > 0:
+
+            cur.execute("UPDATE users set USERNAME=%s WHERE USERNAME=%s",(CHANGE,USERNAME))
+            mysql.connection.commit()
+            cur.close()
+            flash("USERNAME changed")
+            session['USERNAME']=CHANGE
+            return render_template('settings.html')
+        else:
+            msg='wrong username'
+            return render_template('change_username.html',msg=msg)
+
+    return render_template('change_username.html')
+
+@app.route('/delete/')
+@is_logged_in
+def delete():
+    return render_template('delete_confirm.html')
+#delete account
+@app.route('/delete_account/')
+@is_logged_in
+def delete_account():
+    cur=mysql.connection.cursor()
+    cur.execute("DELETE from articles WHERE author=%s",[session['USERNAME']])
+    cur.execute("DELETE from users WHERE USERNAME=%s",[session['USERNAME']])
+    mysql.connection.commit()
+    cur.close()
+    session.clear()
+    flash("ACCOUNT DELETED PERMANENTLY")
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
 

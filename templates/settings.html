@@ -1,0 +1,26 @@
+{%extends 'layout1.html' %}
+
+{% block body %}
+
+<form action="" method="POST">
+  <div class="form.group">
+    {% for search in search %}
+    <label>USERNAME</label><br>
+    {{search.USERNAME}}
+    <a href='/username'><input type="button" class="btn btn-link" value="Change Username"></a><br>
+    <label>EMAIL</label><br>
+    {{search.EMAIL}}
+    {% if search.verify == 0 %}
+    <a href='/token'><input type="button" class="btn btn-link" value="Verify Email"></a><br>
+    {% else %}
+    <label> verified</label><br>
+    {% endif %}
+    <br><a href='/password'><input type="button" class="btn btn-link" value="Change Password"></a><br>
+    <a href='/delete'><input type="button" class="btn btn-link" value="Delete Account"></a><br>
+    {% endfor %}
+  </div>
+
+
+</form>
+
+{% endblock %}
