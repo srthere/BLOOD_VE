@@ -16,8 +16,8 @@ app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT']=465
 app.config['MAIL_USE_SSL']=True
 #add a email and password
-app.config['MAIL_USERNAME'] = 'mi.manishpathak@gmail.com'
-app.config['MAIL_PASSWORD'] = 'cdffbdoavaibqlvn'
+app.config['MAIL_USERNAME'] = ''
+app.config['MAIL_PASSWORD'] = ''
 mail=Mail(app)
 s=URLSafeTimedSerializer(app.secret_key)
 
@@ -138,7 +138,7 @@ def register():
         cur.execute("INSERT INTO cities(EMAIL,CITY) VALUES(%s,%s)",(EMAIL,CITY))
         #for email confirmation
         token=s.dumps(EMAIL,salt='email-confirm')
-        msg=Message('Confirm Email',sender='mi.manishpathak@gmail.com',recipients=[EMAIL])
+        msg=Message('Confirm Email',sender='',recipients=[EMAIL])
         link=url_for('confirm_email',token=token,_external=True)
         msg.body='Your link is {}'.format(link)
         mail.send(msg)
@@ -161,7 +161,7 @@ def token():
         data = cur.fetchone()
         EMAIL = data['EMAIL']
         token=s.dumps(EMAIL,salt='email-confirm')
-        msg=Message('Confirm Email',sender='mi.manishpathak@gmail.com',recipients=[EMAIL])
+        msg=Message('Confirm Email',sender='',recipients=[EMAIL])
         link=url_for('confirm_email',token=token,_external=True)
         msg.body='Your link is {}'.format(link)
         mail.send(msg)
