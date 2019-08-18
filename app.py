@@ -343,6 +343,10 @@ def username():
         CHANGE=request.form['CHANGE']
         cur = mysql.connection.cursor()
         result=cur.execute("SELECT * FROM users WHERE USERNAME = %s",[USERNAME])
+        l=cur.execute("SELECT * FROM users WHERE USERNAME = %s",[CHANGE])
+        if l>0:
+            flash("Enter a unique Username")
+            return redirect(url_for('username'))
         if result > 0:
 
             cur.execute("UPDATE users set USERNAME=%s WHERE USERNAME=%s",(CHANGE,USERNAME))
