@@ -132,6 +132,10 @@ def register():
         CITY = form.CITY.data
         #Create DictCursor
         cur = mysql.connection.cursor()
+        result=cur.execute("SELECT * from users WHERE USERNAME=%s or EMAIL=%s or PHONE_NUMBER=%s",(USERNAME,EMAIL,PHONE_NUMBER))
+        if result>0:
+            flash("Username,Email and Phone Number must be unique!!")
+            return redirect(url_for('register'))
         # Execute query
         cur.execute("INSERT INTO users(NAME, USERNAME, PASSWORD, EMAIL, BLOOD_GROUP, PHONE_NUMBER, ADDRESS,CITY) VALUES(%s, %s, %s, %s, %s, %s, %s,%s)", (NAME, USERNAME, PASSWORD, EMAIL, BLOOD_GROUP, PHONE_NUMBER, ADDRESS,CITY))
 
