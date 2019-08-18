@@ -52,3 +52,4 @@ class loginform(FlaskForm):
 class ArticleForm(FlaskForm):
     title = StringField('Title', [validators.Length(min=1, max=500)])
     body =TextAreaField('Body', [validators.Length(min=30)])
+    

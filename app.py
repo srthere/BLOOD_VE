@@ -293,10 +293,10 @@ def edit_article(id):
     # get article by id
     result = cur.execute("SELECT * FROM articles WHERE id = %s",[id])
     article = cur.fetchone()
-    form =ArticleForm(request.form)
+    form =ArticleForm()
     form.title.data = article['title']
     form.body.data =  article['body']
-    if request.method == 'POST' and form.validate():
+    if request.method=='POST':
         title = request.form['title']
         body= request.form['body']
 
