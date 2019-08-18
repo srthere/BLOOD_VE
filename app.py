@@ -6,7 +6,7 @@ from passlib.hash import sha256_crypt
 from functools import wraps
 from flask_mail import Mail,Message
 from itsdangerous import URLSafeTimedSerializer,SignatureExpired
-from forms import loginform,RegisterForm,ArticleForm,updatePassword
+from forms import loginform,RegisterForm,ArticleForm,updatePassword,forgotPassword,resetform
 app= Flask(__name__)
 #app.config.from_pyfile('config.cfg')
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
@@ -183,8 +183,7 @@ def confirm_email(token):
     mysql.connection.commit()
     cur.close()
     flash ("Email verified")
-    return email
-    return redirect(url_for('login'))
+    return redirect(url_for('index'))
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -400,6 +399,48 @@ def updatepassword():
                 app.logger.info('PASSWORD not MATCHED')
                 return render_template('change_password.html',error=error,form=form)
     return render_template('change_password.html',form=form)
+
+#forgot password token
+@app.route('/forgot/',methods=['GET','POST'])
+def forgot():
+    form=forgotPassword()
+    if form.validate_on_submit():
+        cur=mysql.connection.cursor()
+        USER=request.form['EMAIL']
+        EMAIL=cur.execute("SELECT * from users WHERE EMAIL=%s",[USER])
+        if EMAIL>0:
+            data = cur.fetchone()
+            EMAIL = data['EMAIL']
+            token=s.dumps(EMAIL,salt='email-confirm')
+            msg=Message('Reset Password',sender='mi.manishpathak@gmail.com',recipients=[EMAIL])
+            link=url_for('forgot_pass',token=token,_external=True)
+            msg.body='Your link is {}'.format(link)
+            mail.send(msg)
+            flash("Link Sent!!")
+            return redirect(url_for('index'))
+        else:
+            flask("Wrong Email")
+            return redirect(url_for('index'))
+    return render_template('forgot_password.html',form=form)
+
+#forgot_pass
+@app.route('/forgot_pass/<token>',methods=['GET','POST'])
+def forgot_pass(token):
+    form=resetform()
+    if form.validate_on_submit():
+        try:
+            email=s.loads(token,salt='email-confirm',max_age=300)
+        except SignatureExpired:
+            flash("The Link is Expired")
+            return redirect(url_for('index'))
+        cur=mysql.connection.cursor()
+        var=request.form['PASSWORD']
+        PASSWORD = sha256_crypt.encrypt(str(form.PASSWORD.data))
+        cur.execute("UPDATE users SET PASSWORD=%s WHERE EMAIL=%s",(PASSWORD,email))
+        mysql.connection.commit()
+        cur.close()
+        return redirect(url_for('index'))
+    return render_template('forgot_pass.html',form=form)
 
 if __name__ == '__main__':
 

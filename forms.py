@@ -11,6 +11,20 @@ class updatePassword(FlaskForm):
     ])
     confirm = PasswordField('Confirm Password')
     Submit=SubmitField('Update Password')
+
+#reset format
+class resetform(FlaskForm):
+    PASSWORD =PasswordField('New Password', [
+    validators.DataRequired(),validators.EqualTo('confirm',message='Password do not match')
+    ])
+    confirm = PasswordField('Confirm Password')
+    Submit=SubmitField('Update Password')
+
+#forgot password
+class forgotPassword(FlaskForm):
+    EMAIL =StringField('Email', [validators.Length(min=6, max=50)])
+    Submit=SubmitField('Update Password')
+
 #registe form
 class RegisterForm(FlaskForm):
     NAME = StringField('Name', [validators.Length(min=1, max=50)])
