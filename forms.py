@@ -3,6 +3,15 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, PasswordField, validators,BooleanField,SubmitField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
+#update password
+class updatePassword(FlaskForm):
+    OLDPASSWORD=PasswordField('Old Password')
+    NEWPASSWORD =PasswordField('New Password', [
+    validators.DataRequired(),validators.EqualTo('confirm',message='Password do not match')
+    ])
+    confirm = PasswordField('Confirm Password')
+    Submit=SubmitField('Update Password')
+#registe form
 class RegisterForm(FlaskForm):
     NAME = StringField('Name', [validators.Length(min=1, max=50)])
     USERNAME =StringField('Username', [validators.Length(min=4, max=30)])
@@ -18,6 +27,7 @@ class RegisterForm(FlaskForm):
     CITY = StringField('CITY',[validators.Length(min=2,max=50)])
     Submit=SubmitField('Sign Up')
 
+#login form
 class loginform(FlaskForm):
     USERNAME =StringField('Username', [validators.Length(min=4, max=30)])
     PASSWORD =PasswordField('Password', [validators.DataRequired()])

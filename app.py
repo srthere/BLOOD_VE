@@ -6,7 +6,7 @@ from passlib.hash import sha256_crypt
 from functools import wraps
 from flask_mail import Mail,Message
 from itsdangerous import URLSafeTimedSerializer,SignatureExpired
-from forms import loginform,RegisterForm,ArticleForm
+from forms import loginform,RegisterForm,ArticleForm,updatePassword
 app= Flask(__name__)
 #app.config.from_pyfile('config.cfg')
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
@@ -340,15 +340,15 @@ def username():
         CHANGE=request.form['CHANGE']
         cur = mysql.connection.cursor()
         result=cur.execute("SELECT * FROM users WHERE USERNAME = %s",[USERNAME])
-
         if result > 0:
 
             cur.execute("UPDATE users set USERNAME=%s WHERE USERNAME=%s",(CHANGE,USERNAME))
             mysql.connection.commit()
             cur.close()
-            flash("USERNAME changed")
             session['USERNAME']=CHANGE
-            return render_template('settings.html')
+            msg="USERNAME changed"
+
+            return render_template('settings.html',msg=msg)
         else:
             msg='wrong username'
             return render_template('change_username.html',msg=msg)
@@ -371,6 +371,35 @@ def delete_account():
     session.clear()
     flash("ACCOUNT DELETED PERMANENTLY")
     return redirect(url_for('index'))
+
+#update password
+@app.route('/updatepassword/',methods=['GET','POST'])
+@is_logged_in
+def updatepassword():
+    form=updatePassword()
+    if form.validate_on_submit():
+        #Get Form FIelds
+        OLDPASSWORD = request.form['OLDPASSWORD']
+        PASSWORD_CANDIDATE = request.form['NEWPASSWORD']
+        PASSWORD = sha256_crypt.encrypt(str(form.NEWPASSWORD.data))
+        #Create DictCursor
+        cur = mysql.connection.cursor()
+        result = cur.execute("SELECT * FROM users WHERE USERNAME = %s",[session['USERNAME']])
+        if result > 0:
+            data = cur.fetchone()
+            PASSWORDP = data['PASSWORD']
+            if sha256_crypt.verify(OLDPASSWORD, PASSWORDP):
+                cur.execute("UPDATE users set PASSWORD=%s WHERE USERNAME=%s",(PASSWORD,session['USERNAME']))
+                mysql.connection.commit()
+                cur.close()
+                session.clear()
+                flash('Password Successfully Updated','Please Login')
+                return redirect(url_for('login'))
+            else:
+                error = 'Invalid Old Password'
+                app.logger.info('PASSWORD not MATCHED')
+                return render_template('change_password.html',error=error,form=form)
+    return render_template('change_password.html',form=form)
 
 if __name__ == '__main__':
 
