@@ -16,8 +16,8 @@ app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT']=465
 app.config['MAIL_USE_SSL']=True
 #add a email and password
-app.config['MAIL_USERNAME'] = 'mi.manishpathak@gmail.com'
-app.config['MAIL_PASSWORD'] =  'cdffbdoavaibqlvn'
+app.config['MAIL_USERNAME'] = 'bloodpositive30@gmail.com'
+app.config['MAIL_PASSWORD'] =  ''
 mail=Mail(app)
 s=URLSafeTimedSerializer(app.secret_key)
 
@@ -73,7 +73,7 @@ def send():
                     body+=i['PHONE_NUMBER']
                     body+='\n'+"Thank You!!"
      #add a sender email
-            msg = mail.send_message('Requirement of Blood in Your City',sender='mi.manishpathak@gamil.com',recipients=recipients,body=body)
+            msg = mail.send_message('Requirement of Blood in Your City',sender='bloodpositive30@gamil.com',recipients=recipients,body=body)
             l="msg sent"
             return render_template('home.html',msg=l)
         else:
@@ -138,7 +138,7 @@ def register():
         cur.execute("INSERT INTO cities(EMAIL,CITY) VALUES(%s,%s)",(EMAIL,CITY))
         #for email confirmation
         token=s.dumps(EMAIL,salt='email-confirm')
-        msg=Message('Confirm Email',sender='mi.manishpathak@gmail.com',recipients=[EMAIL])
+        msg=Message('Confirm Email',sender='bloodpositive30@gmail.com',recipients=[EMAIL])
         link=url_for('confirm_email',token=token,_external=True)
         msg.body='Your link is {}'.format(link)
         mail.send(msg)
@@ -161,7 +161,7 @@ def token():
         data = cur.fetchone()
         EMAIL = data['EMAIL']
         token=s.dumps(EMAIL,salt='email-confirm')
-        msg=Message('Confirm Email',sender='mi.manishpathak@gmail.com',recipients=[EMAIL])
+        msg=Message('Confirm Email',sender='bloodpositive30@gmail.com',recipients=[EMAIL])
         link=url_for('confirm_email',token=token,_external=True)
         msg.body='Your link is {}'.format(link)
         mail.send(msg)
@@ -412,7 +412,7 @@ def forgot():
             data = cur.fetchone()
             EMAIL = data['EMAIL']
             token=s.dumps(EMAIL,salt='email-confirm')
-            msg=Message('Reset Password',sender='mi.manishpathak@gmail.com',recipients=[EMAIL])
+            msg=Message('Reset Password',sender='bloodpositive30@gmail.com',recipients=[EMAIL])
             link=url_for('forgot_pass',token=token,_external=True)
             msg.body='Your link is {}'.format(link)
             mail.send(msg)
