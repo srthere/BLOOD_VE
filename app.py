@@ -17,7 +17,7 @@ app.config['MAIL_PORT']=465
 app.config['MAIL_USE_SSL']=True
 #add a email and password
 app.config['MAIL_USERNAME'] = 'bloodpositive30@gmail.com'
-app.config['MAIL_PASSWORD'] =  ''
+app.config['MAIL_PASSWORD'] =  'fuaahjtmqcurwgji'
 mail=Mail(app)
 s=URLSafeTimedSerializer(app.secret_key)
 
@@ -52,7 +52,11 @@ def send():
         CITY = request.form['CITY']
         BLOOD_GROUP=request.form['BLOOD_GROUP']
         cur = mysql.connection.cursor()
-        xpcounter = "SELECT * FROM users WHERE CITY = %s AND BLOOD_GROUP=%s"
+        xpcounter = "SELECT * FROM users WHERE CITY = %s AND BLOOD_GROUP=%s "
+        c=cur.execute("SELECT * from users where USERNAME=%s and verify=0",[session['USERNAME']])
+        if c>0:
+            msg="Please Verify Your EMAIL"
+            return render_template('confirm.html',msg=msg)
         result=cur.execute(xpcounter, (CITY, BLOOD_GROUP))
         if result > 0:
             result=cur.execute("SELECT * FROM users WHERE CITY=%s",[CITY])
