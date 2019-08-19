@@ -418,7 +418,11 @@ def forgot():
     if form.validate_on_submit():
         cur=mysql.connection.cursor()
         USER=request.form['EMAIL']
-        EMAIL=cur.execute("SELECT * from users WHERE EMAIL=%s",[USER])
+        g=cur.execute("SELECT * from users WHERE EMAIL=%s and verify=0 ",[USER])
+        if g>0:
+            msg="Email not verified"
+            return render_template('forgot_password.html',msg=msg,form=form)
+        EMAIL=cur.execute("SELECT * from users WHERE EMAIL=%s ",[USER])
         if EMAIL>0:
             data = cur.fetchone()
             EMAIL = data['EMAIL']
