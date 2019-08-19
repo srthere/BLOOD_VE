@@ -17,7 +17,7 @@ app.config['MAIL_PORT']=465
 app.config['MAIL_USE_SSL']=True
 #add a email and password
 app.config['MAIL_USERNAME'] = 'bloodpositive30@gmail.com'
-app.config['MAIL_PASSWORD'] =  'fuaahjtmqcurwgji'
+app.config['MAIL_PASSWORD'] =  ''
 mail=Mail(app)
 s=URLSafeTimedSerializer(app.secret_key)
 
@@ -61,6 +61,9 @@ def send():
             for i in search:
                 if(i['USERNAME']!=session['USERNAME']):
                     recipients.append(i['EMAIL'])
+            if len(recipients)==0:
+                msg="no donors found "
+                return render_template('confirm.html',msg=msg)
             body='Hello!!\n'
             k=cur.execute("SELECT * FROM users WHERE USERNAME=%s",[session['USERNAME']])
             search=cur.fetchall()
@@ -177,7 +180,7 @@ def token():
 @app.route('/confirm_email/<token>')
 def confirm_email(token):
     try:
-        email=s.loads(token,salt='email-confirm',max_age=300)
+        email=s.loads(token,salt='email-confirm',max_age=200)
     except SignatureExpired:
         msg="The Link is Expired"
         return render_template('home.html',msg=msg)
@@ -437,7 +440,7 @@ def forgot_pass(token):
     form=resetform()
     if form.validate_on_submit():
         try:
-            email=s.loads(token,salt='email-confirm',max_age=300)
+            email=s.loads(token,salt='email-confirm',max_age=200)
         except SignatureExpired:
             msg="The Link is Expired"
             return render_template('home.html',msg=msg)
