@@ -12,12 +12,12 @@ app= Flask(__name__)
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 #config EMAIL
 
-app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_SERVER']='smtp.googlemail.com'
 app.config['MAIL_PORT']=465
 app.config['MAIL_USE_SSL']=True
 #add a email and password
 app.config['MAIL_USERNAME'] = 'bloodpositive30@gmail.com'
-app.config['MAIL_PASSWORD'] =  ''
+app.config['MAIL_PASSWORD'] =  'fuaahjtmqcurwgji'
 mail=Mail(app)
 s=URLSafeTimedSerializer(app.secret_key)
 
@@ -427,8 +427,8 @@ def forgot():
             flash("Link Sent!!")
             return redirect(url_for('index'))
         else:
-            flask("Wrong Email")
-            return redirect(url_for('index'))
+            flash("Wrong Email")
+            return redirect(url_for('login'))
     return render_template('forgot_password.html',form=form)
 
 #forgot_pass
