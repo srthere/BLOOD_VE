@@ -1,16 +1,20 @@
 {% extends 'layout1.html' %}
 
 {% block body %}
-  <h1>Change Username</h1>
+<div class ="content-section" style="width: auto; margin-top: 40px; margin-left: 50px">
+  <h1 style="color: black">Change Username</h1>
 
 
   <form action="" method="POST">
-    <div class="form.group">
+    <div class="form.group" style="color: black; font-weight: bold; text-align: left">
       <label>Old  USERNAME</label>
       <input type="text" name="USERNAME" class="form-control" value ={{request.form.USERNAME}}>
+<br>
       <label>New USERNAME</label>
       <input type="text" name="CHANGE" class="form-control" value ={{request.form.CHANGE}}>
     </div>
+<br>
     <button type="submit" class="btn btn-primary">Change Username</button>
   </form>
+</div>
   {% endblock %}

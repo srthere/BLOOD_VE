@@ -4,12 +4,18 @@
     <meta charset="utf'-8">
     <title>Blood Positive</title>
      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
     {%include 'includes/_navbar.html' %}
-    <div class="container">
+    <div class="container" style="margin-top: 60px">
       {% include 'includes/_messages.html' %}
+      <main role="main" class="container">
+        <div class="row">
+          <div class="col-md-8">
       {% block body %}{% endblock %}
+    </div>
+  </div>
     </div>
 
 

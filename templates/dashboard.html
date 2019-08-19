@@ -1,9 +1,10 @@
 {%extends 'layout1.html' %}
 {% block body %}
-  <h1>Dashboard <small>Welcome {{ session.USERNAME}}</small></h1>
+  <h1 style="color: white"><span>Welcome {{ session.USERNAME}}!</span></h1>
   <a class="btn btn-success" href="/add_article">Add Article</a>
   <hr>
-  <table class="table table-striped">
+  <table class="table table-border" style="color: white; font-size:18px; background-color: black">
+   <thead style="font-weight: bold">
     <tr>
       <th>ID</th>
       <th>Title</th>
@@ -12,19 +13,23 @@
       <th></th>
       <th></th>
     </tr>
+   </thead>
+  <tbody>
     {% for article in articles %}
-      <tr>
+      <tr style="color: #5dade2">
         <td>{{article.id}}</td>
         <td>{{article.title}}</td>
         <td>{{article.author}}</td>
         <td>{{article.create_date}}</td>
         <td><a href="/edit_article/{{article.id}}" class="btn btn-default pull-right">Edit</a></td>
         <td>
-          <form action="{{url_for('delete_article', id =article.id)}}" method = "post">
+          <form action="{{url_for('delete_article', id =article.id)}}" method = "post" style="color: white">
             <input type="hidden" name="_method" value="DELETE">
             <input type="submit" VALUE="Delete" class="btn btn-danger">
           </form>
         </td>
       </tr>
     {% endfor %}
+</tbody>
+</table
 {% endblock %}

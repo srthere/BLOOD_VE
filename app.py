@@ -100,7 +100,7 @@ def articles():
     if result>0:
         return render_template('articles.html', articles=articles)
     else:
-        msg= 'No article found'
+        msg= 'No feedbacks found'
         return render_template('articles.html',msg =msg)
     #close conection
     cur.close()
@@ -134,8 +134,8 @@ def register():
         cur = mysql.connection.cursor()
         result=cur.execute("SELECT * from users WHERE USERNAME=%s or EMAIL=%s or PHONE_NUMBER=%s",(USERNAME,EMAIL,PHONE_NUMBER))
         if result>0:
-            flash("Username,Email and Phone Number must be unique!!")
-            return redirect(url_for('register'))
+            msg="Username,Email and Phone Number must be unique!!"
+            return render_template('register.html',msg=msg,form=form)
         # Execute query
         cur.execute("INSERT INTO users(NAME, USERNAME, PASSWORD, EMAIL, BLOOD_GROUP, PHONE_NUMBER, ADDRESS,CITY) VALUES(%s, %s, %s, %s, %s, %s, %s,%s)", (NAME, USERNAME, PASSWORD, EMAIL, BLOOD_GROUP, PHONE_NUMBER, ADDRESS,CITY))
 
@@ -169,8 +169,8 @@ def token():
         link=url_for('confirm_email',token=token,_external=True)
         msg.body='Your link is {}'.format(link)
         mail.send(msg)
-        flash("Link Sent!!")
-        return redirect(url_for('index'))
+        msg="Link Sent!!"
+        return render_template('home.html',msg=msg)
 
 
 #showing confirmation Message
@@ -179,15 +179,15 @@ def confirm_email(token):
     try:
         email=s.loads(token,salt='email-confirm',max_age=300)
     except SignatureExpired:
-        flash("The Link is Expired")
-        return redirect(url_for('index'))
+        msg="The Link is Expired"
+        return render_template('home.html',msg=msg)
     cur=mysql.connection.cursor()
     var=True
     cur.execute("UPDATE users SET verify=%s WHERE EMAIL=%s",(var,email))
     mysql.connection.commit()
     cur.close()
-    flash ("Email verified")
-    return redirect(url_for('index'))
+    msg="Email verified"
+    return render_template('home.html',msg=msg)
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -236,7 +236,7 @@ def dashboard():
     if result>0:
         return render_template('dashboard.html', articles=articles)
     else:
-        msg= 'No article found'
+        msg= 'No feedback found'
         return render_template('dashboard.html',msg =msg)
     #close conection
 
@@ -281,7 +281,7 @@ def add_article():
         mysql.connection.commit()
         #close connection
         cur.close()
-        flash('Article created', 'success')
+        flash('Feedback submitted', 'success')
         return redirect(url_for('dashboard'))
     return render_template('add_article.html', form =form)
 #edit article
@@ -310,7 +310,7 @@ def edit_article(id):
         mysql.connection.commit()
         #close connection
         cur.close()
-        flash('Article updated', 'success')
+        flash('Feedback updated', 'success')
         return redirect(url_for('dashboard'))
     return render_template('edit_article.html', form =form)
 #delete_article
@@ -322,7 +322,7 @@ def delete_article(id):
     mysql.connection.commit()
     #close connection
     cur.close()
-    flash('Article Deleted', 'success')
+    flash('Feedback Deleted', 'success')
     return redirect(url_for('dashboard'))
 #account settings
 @app.route('/settings/')
@@ -345,8 +345,8 @@ def username():
         result=cur.execute("SELECT * FROM users WHERE USERNAME = %s",[USERNAME])
         l=cur.execute("SELECT * FROM users WHERE USERNAME = %s",[CHANGE])
         if l>0:
-            flash("Enter a unique Username")
-            return redirect(url_for('username'))
+            msg="Enter a unique Username"
+            return render_template('change_username.html',msg=msg)
         if result > 0:
 
             cur.execute("UPDATE users set USERNAME=%s WHERE USERNAME=%s",(CHANGE,USERNAME))
@@ -376,8 +376,8 @@ def delete_account():
     mysql.connection.commit()
     cur.close()
     session.clear()
-    flash("ACCOUNT DELETED PERMANENTLY")
-    return redirect(url_for('index'))
+    msg="ACCOUNT DELETED PERMANENTLY"
+    return render_template('home.html',msg=msg)
 
 #update password
 @app.route('/updatepassword/',methods=['GET','POST'])
@@ -400,8 +400,8 @@ def updatepassword():
                 mysql.connection.commit()
                 cur.close()
                 session.clear()
-                flash('Password Successfully Updated','Please Login')
-                return redirect(url_for('login'))
+                msg='Password Successfully Updated','Please Login'
+                return render_template('login.html',msg=msg)
             else:
                 error = 'Invalid Old Password'
                 app.logger.info('PASSWORD not MATCHED')
@@ -424,11 +424,11 @@ def forgot():
             link=url_for('forgot_pass',token=token,_external=True)
             msg.body='Your link is {}'.format(link)
             mail.send(msg)
-            flash("Link Sent!!")
-            return redirect(url_for('index'))
+            msg='Link Sent!!'
+            return render_template('home.html',msg=msg)
         else:
-            flash("Wrong Email")
-            return redirect(url_for('login'))
+            msg='Wrong Email'
+            return render_template('forgot_password.html',msg=msg,form=form)
     return render_template('forgot_password.html',form=form)
 
 #forgot_pass
@@ -439,8 +439,8 @@ def forgot_pass(token):
         try:
             email=s.loads(token,salt='email-confirm',max_age=300)
         except SignatureExpired:
-            flash("The Link is Expired")
-            return redirect(url_for('index'))
+            msg="The Link is Expired"
+            return render_template('home.html',msg=msg)
         cur=mysql.connection.cursor()
         var=request.form['PASSWORD']
         PASSWORD = sha256_crypt.encrypt(str(form.PASSWORD.data))

@@ -1,13 +1,16 @@
 {% extends 'layout1.html'%}
 {% block body %}
-  <h1>Add Article</h1>
+<div class ="content-section" style="width: auto; margin-top: 40px; margin-left: 50px; text-align: center">
+  <h1 style="color: black">Add Article</h1>
+	<br>
   {% from "includes/_formhelpers.html" import render_field %}
   <form method ="POST" action="">
-    <div class="form-group">
+    <div class="form-group" style="color: black; font-weight: bold; text-align: left; font-size:20px">
       {{render_field(form.title, class_="form-control")}}
-
+	<br>
       {{render_field(form.body, class_="form-control", id= "editor")}}
     </div>
-    <p><input class="btn btn-primary" type="submit" value="submit">
+    <input class="btn btn-primary"style="font-wight: bold" type="submit" value="ADD">
   </form>
+</div>
 {%endblock%}

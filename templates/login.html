@@ -1,12 +1,14 @@
 {% extends 'layout.html' %}
 {% block content %}
-    <div class="content-section">
+	<div class ="split centered" style="width: 40%; margin-top: 350px; margin-left: 170px">
+	<div class="content-section">
+	<h1 style="color: black">Login</h1>
+	<br>
         <form method="POST" action="">
             {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Log In</legend>
+            <fieldset class="form-group" style="color: black; font-weight: bold; text-align: left">
                 <div class="form-group">
-                    {{ form.USERNAME.label(class="form-control-label") }}
+                    {{ form.USERNAME.label(class="form-control-lable") }}
                     {% if form.USERNAME.errors %}
                         {{ form.USERNAME(class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
@@ -37,10 +39,10 @@
                 </div>
             </fieldset>
             <div class="form-group">
-                {{ form.Submit(class="btn btn-outline-info") }}
+                {{ form.Submit(class="btn btn-success btn-lg btn-block") }}
             </div>
             <small class="text-muted ml-2">
-                <a href="{{ url_for('forgot') }}"">Forgot Password?</a>
+                <a href={{url_for('forgot')}}>Forgot Password?</a>
             </small>
         </form>
     </div>
@@ -49,4 +51,5 @@
             Need An Account? <a class="ml-2" href="{{ url_for('register') }}">Sign Up Now</a>
         </small>
     </div>
+</div>
 {% endblock content %}

@@ -1,13 +1,15 @@
 {%extends 'layout1.html' %}
 {% block body %}
+<div class ="content-section" style="width: auto; margin-top: 40px; margin-left: 50px">
 
 <form action="" method="POST">
-  <div class="form.group">
-    <label>Do You Really want to delete your account?</label>
-    <a href='/delete_account'><input type="button" class="btn btn-primary" value="YES"></a>
-    <a href='/settings'><input type="button" class="btn btn-primary" value="NO"></a>
+  <div class="form.group" style="color: black; font-weight: bold; text-align: left">
+    <span style="font-size: 20px; color: black">Do You Really want to delete your account?</span><br>
+
+    <a href='/delete_account' style="margin-left: 25px; font-weight: bold"><input type="button" class="btn btn-danger" value="YES"></a>
+    <a href='/settings' style="margin-left: 40px; font-weight: bold"><input type="button" class="btn btn-primary" value="NO"></a>
   </div>
 
 </form>
-
+</div>
 {% endblock %}

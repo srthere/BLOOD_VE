@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-inverse bg-dark navbar-fixed-top" style="background-color: black">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -7,30 +7,25 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-
-          <a class="navbar-brand" href="/">Blood +ve</a>
+          <a class="navbar-brand" href="/">
+	<img src="/home/shubhangi/Desktop/Blood+ve/BLOOD_ve/project/templates" style="display: inline-block" class="image-responsive">
+	<span style="display: inline-block;">Blood+ve</span>
+	</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="/about">About</a></li>
-
-
-        <li><button class="btn btn-outline-success my-2 my-sm-0" type="submit" style="margin:8px" onclick="location.href='/Search/'" ">Search</button></li>
-        <li><button class="btn btn-outline-success my-2 my-sm-0" type="submit" style="margin:8px" onclick="location.href='/articles/'" ">Feedback</button></li>
-
-          </ul>
-
           <ul class="nav navbar-nav navbar-right">
+	    <li><a href="/about">About</a></li>
+            <li><a href="/Search/"> Search</a></li>
+            <li><a href="/articles/">Feedbacks</a></li>
             {% if session.logged_in %}
               <li><a href="/logout/">Logout</a></li>
               <li><a href="/dashboard/">Dashboard</a></li>
               <li><a href="/settings/">Account Settings</a></li>
             {% else %}
-              <li><a href="/register/" >Register</a></li>
+             <li><a href="/register/" >Register</a></li>
               <li><a href="/login/">Login</a></li>
             {%endif%}
-
           </ul>
         </div><!--/.nav-collapse -->
       </div>
-</nav>
+    </nav>

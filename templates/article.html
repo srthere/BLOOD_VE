@@ -2,10 +2,10 @@
 
 {% block body %}
 
-<h1>{{article.title}}</h1>
-<small>Written by {{article.author}} on {{article.create_date}}</small>
+<h1 style="color: white">{{article.title}}</h1>
+<small style="color: white">Written by {{article.author}} on {{article.create_date}}</small>
 <hr>
-<div>
+<div style="color: white">
     {{article.body | safe}}
 </div>
 {% endblock %}

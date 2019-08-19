@@ -1,14 +1,16 @@
 {%extends 'layout1.html' %}
 {% block body %}
-
+<br>
+<div class ="content-section" style="width: auto; margin-top: 40px; margin-left: 50px">
 <form action="" method="POST">
   <div class="form.group">
-    <label>Confirm City</label>
-    <input type="text" name="CITY" class="form-control" value ={{request.form.CITY}}>
-    <label>Blood Group</label>
+    <h4 style="color: black">City</h4>
+    <input type="text" name="CITY" class="form-control" value ={{request.form.CITY}}><br>
+    <h4 style="color: black">Blood Group</h4>
     <input type="text" name="BLOOD_GROUP" class="form-control" value ={{request.form.BLOOD_GROUP}}>
   </div>
+<br>
   <button type="submit" class="btn btn-primary">Confirm</button>
 </form>
-
+</div>
 {% endblock %}
