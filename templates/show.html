@@ -1,0 +1,29 @@
+{%extends 'layout1.html' %}
+{% block body %}
+  <h1 style="color: white"><span>Welcome {{ session.USERNAME}}!</span></h1>
+  <h1 style="color: white"><span>Fulfilled Requests</span></h1>
+  <hr>
+  <table class="table table-border" style="color: white; font-size:18px; background-color: black">
+   <thead style="font-weight: bold">
+    <tr>
+
+      <th>City</th>
+      <th>Blood Group</th>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+    </tr>
+   </thead>
+  <tbody>
+    {% for fulfills in fulfill %}
+      <tr style="color: #5dade2">
+        <td>{{fulfills.CITY}}</td>
+        <td>{{fulfills.BLOOD_GROUP}}</td>
+        <td>{{fulfills.create_date}}</td>
+
+
+      </tr>
+    {% endfor %}
+</tbody>
+</table
+{% endblock %}

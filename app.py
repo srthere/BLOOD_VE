@@ -12,7 +12,7 @@ app= Flask(__name__)
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 #config EMAIL
 
-app.config['MAIL_SERVER']='smtp.googlemail.com'
+app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT']=465
 app.config['MAIL_USE_SSL']=True
 #add a email and password
@@ -44,7 +44,7 @@ def index():
     return render_template('home.html')
 
 #for sending mail
-@app.route('/send/',methods=['GET','post'])
+@app.route('/send/',methods=['GET','POST'])
 @is_logged_in
 def send():
     if request.method == 'POST':
@@ -59,7 +59,7 @@ def send():
             return render_template('confirm.html',msg=msg)
         result=cur.execute(xpcounter, (CITY, BLOOD_GROUP))
         if result > 0:
-            result=cur.execute("SELECT * FROM users WHERE CITY=%s",[CITY])
+            result=cur.execute("SELECT * FROM users WHERE CITY=%s and BLOOD_GROUP=%s",(CITY,BLOOD_GROUP))
             search = cur.fetchall()
             recipients=[]
             for i in search:
@@ -80,6 +80,8 @@ def send():
                     body+=i['PHONE_NUMBER']
                     body+='\n'+"Thank You!!"
      #add a sender email
+            cur.execute("INSERT INTO request(CITY,BLOOD_GROUP,verify)VALUES(%s, %s, %s)",(CITY,BLOOD_GROUP,0))
+            mysql.connection.commit()
             msg = mail.send_message('Requirement of Blood in Your City',sender='bloodpositive30@gamil.com',recipients=recipients,body=body)
             l="msg sent"
             return render_template('home.html',msg=l)
@@ -213,7 +215,7 @@ def login():
                 session['logged_in'] = True
                 session['USERNAME'] = USERNAME
                 flash('You are now logged in', 'success')
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('index'))
             else:
                 error = 'Invalid Password'
                 app.logger.info('PASSWORD not MATCHED')
@@ -238,12 +240,12 @@ def dashboard():
 
     cur =mysql.connection.cursor()
     #Get Aricle
-    result = cur.execute("SELECT * FROM articles")
+    result = cur.execute("SELECT * FROM request")
     articles = cur.fetchall()
     if result>0:
         return render_template('dashboard.html', articles=articles)
     else:
-        msg= 'No feedback found'
+        msg= 'No History found'
         return render_template('dashboard.html',msg =msg)
     #close conection
 
@@ -291,6 +293,9 @@ def add_article():
         flash('Feedback submitted', 'success')
         return redirect(url_for('dashboard'))
     return render_template('add_article.html', form =form)
+
+
+
 #edit article
 @app.route('/edit_article/<string:id>/', methods = ['GET', 'POST'])
 @is_logged_in
@@ -321,16 +326,39 @@ def edit_article(id):
         return redirect(url_for('dashboard'))
     return render_template('edit_article.html', form =form)
 #delete_article
-@app.route('/delete_article/<string:id>/', methods=['post'])
+@app.route('/delete_article/<string:id>/<string:city>/<string:blood>/', methods=['post'])
 @is_logged_in
-def delete_article(id):
+def delete_article(id,city,blood):
+    form=ArticleForm()
     cur = mysql.connection.cursor()
-    cur.execute("DELETE FROM articles WHERE ID =%s", [id])
+    cur.execute("UPDATE request SET verify=%s WHERE CITY=%s and BLOOD_GROUP=%s AND id=%s",(1,city,blood,id))
     mysql.connection.commit()
     #close connection
     cur.close()
-    flash('Feedback Deleted', 'success')
-    return redirect(url_for('dashboard'))
+    body='Hello!!\n'
+    cur = mysql.connection.cursor()
+    k=cur.execute("SELECT * FROM users WHERE USERNAME=%s",[session['USERNAME']])
+    search=cur.fetchall()
+    for i in search:
+        if(i['NAME']):
+            body=body+i['NAME']
+            body+=' has now fulfilled his/her request.'
+            body+='\n'+'Please Dont contact him anymore.\n'
+            body+='\n'+"Thank You for you support!!"
+    xpcounter = "SELECT * FROM users WHERE CITY = %s AND BLOOD_GROUP=%s "
+    result=cur.execute(xpcounter, (city, blood))
+    if result > 0:
+        result=cur.execute("SELECT * FROM users WHERE CITY=%s and BLOOD_GROUP=%s",(city,blood))
+        search = cur.fetchall()
+        recipients=[]
+        for i in search:
+            if(i['USERNAME']!=session['USERNAME']):
+                recipients.append(i['EMAIL'])
+    msg = mail.send_message('Request Fulfilled',sender='bloodpositive30@gamil.com',recipients=recipients,body=body)
+    return redirect(url_for('add_article'))
+
+
+
 #account settings
 @app.route('/settings/')
 @is_logged_in
@@ -460,6 +488,21 @@ def forgot_pass(token):
         cur.close()
         return redirect(url_for('index'))
     return render_template('forgot_pass.html',form=form)
+
+@app.route('/show/')
+def show():
+    cur =mysql.connection.cursor()
+    #Get Aricle
+    result = cur.execute("SELECT * FROM request WHERE verify=%s",[1])
+    fulfill = cur.fetchall()
+    if result>0:
+        return render_template('show.html', fulfill=fulfill)
+    else:
+        msg= 'No History found'
+        return render_template('dashboard.html',msg =msg)
+    #close conection
+
+    cur.close()
 
 if __name__ == '__main__':
 
