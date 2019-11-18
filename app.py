@@ -17,7 +17,7 @@ app.config['MAIL_PORT']=465
 app.config['MAIL_USE_SSL']=True
 #add a email and password
 app.config['MAIL_USERNAME'] = 'bloodpositive30@gmail.com'
-app.config['MAIL_PASSWORD'] =  ''
+app.config['MAIL_PASSWORD'] =  'fuaahjtmqcurwgji'
 mail=Mail(app)
 s=URLSafeTimedSerializer(app.secret_key)
 
